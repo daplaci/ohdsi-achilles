@@ -40,12 +40,7 @@ RUN --mount=type=cache,sharing=private,target=/renv_cache \
 # https://ohdsi.github.io/DatabaseConnector/articles/Connecting.html#the-jar-folder
 ENV DATABASECONNECTOR_JAR_FOLDER="/usr/local/lib/DatabaseConnectorJars"
 RUN set -eux; \
-  Rscript \
-    -e 'renv::activate("/app")' \
-    -e 'renv::install("shiny")' \
-    -e 'library(DatabaseConnector)' \
-    -e 'downloadJdbcDrivers("all")' \
-  ;
+  Rscript -e 'DatabaseConnector::downloadJdbcDrivers("all")';
 
 WORKDIR /output
 
