@@ -1,3 +1,5 @@
+[![Docker-ghcr](https://github.com/daplaci/ohdsi-achilles/actions/workflows/docker-publish.yml/badge.svg?branch=main)](https://github.com/daplaci/ohdsi-achilles/actions/workflows/docker-publish.yml)
+
 # Achilles (and DQD) Container Image
 
 https://ohdsi.github.io/Achilles/articles/RunningAchilles.html
