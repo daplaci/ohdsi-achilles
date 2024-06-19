@@ -24,15 +24,21 @@ RUN set -eux; \
 COPY renv.lock ./
 
 # Set flags for compilation in R
-ENV MAKEFLAGS="-j6"
-ENV CXXFLAGS="-O2 -mtune=native -march=native"
-ENV ALL_CXXFLAGS="-O2 -mtune=native -march=native -fPIC"
-
+RUN mkdir -p ~/.R && echo "MAKEFLAGS = -j6" >> ~/.R/Makevars;
 RUN --mount=type=cache,sharing=private,target=/renv_cache \
   set -eux; \
   Rscript \
   -e 'renv::activate("/app");' \
-  -e 'renv::restore();' \
+  -e 'renv::restore(exclude = "duckdb");' \
+;
+
+# Need ALL_CXXFLAGS for duckdb only, see: https://duckdb.org/docs/dev/building/troubleshooting
+RUN echo "ALL_CXXFLAGS = $(PKG_CXXFLAGS) -fPIC $(SHLIB_CXXFLAGS) $(CXXFLAGS)" >> ~/.R/Makevars;
+RUN --mount=type=cache,sharing=private,target=/renv_cache \
+  set -eux; \
+  Rscript \
+  -e 'renv::activate("/app");' \
+  -e 'renv::restore(packages = "duckdb");' \
   -e 'renv::isolate();' \
 ;
 
