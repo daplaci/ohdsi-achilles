@@ -21,6 +21,14 @@ RUN set -eux; \
   ;
 
 COPY renv.lock ./
+
+# Set flags for compilation in R
+RUN mkdir -p ~/.R; \
+  echo "MAKEFLAGS = -j6" >> ~/.R/Makevars; \
+  echo "CXXFLAGS = -O2 -mtune=native -march=native" >> ~/.R/Makevars; \
+  echo "CFLAGS = -O2 -fPIC -mtune=native -march=native" >> ~/.R/Makevars; \
+  echo "ALL_CXXFLAGS = $(PKG_CXXFLAGS) -fPIC $(SHLIB_CXXFLAGS) $(CXXFLAGS)" >> ~/.R/Makevars;
+
 RUN --mount=type=cache,sharing=private,target=/renv_cache \
   set -eux; \
   Rscript \
