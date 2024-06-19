@@ -163,7 +163,8 @@ valid_dbms <- list(
   "postgresql",
   "redshift",
   "sql server",
-  "sqlite"
+  "sqlite",
+  "duckdb"
 )
 
 # these dbms require the database name to be appended to the hostname
