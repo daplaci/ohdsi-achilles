@@ -23,23 +23,25 @@ RUN set -eux; \
 
 COPY renv.lock ./
 
-# Set flags for compilation in R
-RUN mkdir -p ~/.R && echo "MAKEFLAGS = -j2" >> ~/.R/Makevars;
-RUN --mount=type=cache,sharing=private,target=/renv_cache \
-  set -eux; \
-  Rscript \
-  -e 'renv::activate("/app");' \
-  -e 'renv::restore(exclude = "duckdb");' \
-;
-
 # Need ALL_CXXFLAGS for duckdb only, see: https://duckdb.org/docs/dev/building/troubleshooting
-RUN echo "ALL_CXXFLAGS = $(PKG_CXXFLAGS) -fPIC $(SHLIB_CXXFLAGS) $(CXXFLAGS)" >> ~/.R/Makevars;
+RUN mkdir ~/.R && \
+    echo "ALL_CXXFLAGS = \$(PKG_CXXFLAGS) -fPIC \$(SHLIB_CXXFLAGS) \$(CXXFLAGS)" > ~/.R/Makevars;
+
 RUN --mount=type=cache,sharing=private,target=/renv_cache \
   set -eux; \
   Rscript \
   -e 'renv::activate("/app");' \
   -e 'renv::restore(packages = "duckdb");' \
   -e 'renv::isolate();' \
+;
+
+# Set flags for compilation in R
+RUN rm -r ~/.R;
+RUN --mount=type=cache,sharing=private,target=/renv_cache \
+  set -eux; \
+  Rscript \
+  -e 'renv::activate("/app");' \
+  -e 'renv::restore(exclude = "duckdb");' \
 ;
 
 # https://ohdsi.github.io/DatabaseConnector/articles/Connecting.html#the-jar-folder
