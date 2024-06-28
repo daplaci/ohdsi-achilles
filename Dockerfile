@@ -24,7 +24,7 @@ RUN set -eux; \
 COPY renv.lock ./
 
 # Set flags for compilation in R
-RUN mkdir -p ~/.R && echo "MAKEFLAGS = -j6" >> ~/.R/Makevars;
+RUN mkdir -p ~/.R && echo "MAKEFLAGS = -j2" >> ~/.R/Makevars;
 RUN --mount=type=cache,sharing=private,target=/renv_cache \
   set -eux; \
   Rscript \
